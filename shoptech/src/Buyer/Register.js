@@ -6,6 +6,7 @@ import {
   TextField,
   Button,
   Paper,
+  Link,
 } from "@mui/material";
 
 export default function SignUpPage() {
@@ -241,6 +242,23 @@ export default function SignUpPage() {
           >
             Sign Up
           </Button>
+
+          <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mt: 2,
+                flexWrap: "wrap",
+                gap: 1.5,
+              }}
+            >
+              <Typography variant="body2" sx={{ opacity: 0.90 }}>
+                Already have an account?{" "}
+                <Link href="/login" underline="hover">
+                  Login
+                </Link>
+              </Typography>
+            </Box>
         </Box>
       </Paper>
     </Container>

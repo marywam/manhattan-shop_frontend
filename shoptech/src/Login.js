@@ -7,6 +7,7 @@ import {
   Button,
   Paper,
   Fade,
+  Link,
 } from "@mui/material";
 import heroImage from "../src/assets/dp.jpeg"; // 🔹 replace with your jewel image path
 
@@ -155,6 +156,23 @@ export default function LoginPage() {
             >
               Login
             </Button>
+
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "space-between",
+                mt: 2,
+                flexWrap: "wrap",
+                gap: 1.5,
+              }}
+            >
+              <Typography variant="body2" sx={{ opacity: 0.90 }}>
+                New here?{" "}
+                <Link href="/register" underline="hover">
+                  Create account
+                </Link>
+              </Typography>
+            </Box>
           </Box>
         </Box>
       </Paper>
