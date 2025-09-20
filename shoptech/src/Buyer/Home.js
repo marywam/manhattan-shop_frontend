@@ -348,7 +348,7 @@ export default function HomePage() {
               alt="Earrings"
               sx={{
                 width: { xs: "89%", md: "50%", lg: "50%", xl: "50%" },
-
+                borderRadius: "10px",
                 mx: { xs: "auto", md: 0 }, // center horizontally on small screens
                 display: "block", // ensures mx:auto works
               }}
@@ -426,7 +426,7 @@ export default function HomePage() {
               alt="Bangles"
               sx={{
                 width: { xs: "89%", md: "50%" },
-
+                borderRadius: "10px",
                 mx: { xs: "auto", md: 0 }, // center horizontally on small screens
                 display: "block",
               }}
@@ -448,7 +448,7 @@ export default function HomePage() {
               alt="Necklace"
               sx={{
                 width: { xs: "89%", md: "50%" },
-
+                borderRadius: "10px",
                 mx: { xs: "auto", md: 0 }, // center horizontally on small screens
                 display: "block",
               }}
@@ -526,7 +526,7 @@ export default function HomePage() {
               alt="Rings"
               sx={{
                 width: { xs: "89%", md: "50%" },
-
+                borderRadius: "10px",
                 mx: "auto", // center horizontally on small screens
                 display: "block",
               }}
@@ -562,13 +562,45 @@ export default function HomePage() {
     }}
   >
     {/* Item 1 */}
-    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden" }}>
+    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden" ,  cursor: "pointer",
+    "&:hover .overlay": { opacity: 1 },
+    "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" },
+  }}>
       <Box
         component="img"
         src={silver}
         alt="Silver Hoops"
-        sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+        sx={{ width: "100%", height: "100%", objectFit: "cover",  transition: "all 0.4s ease", }}
       />
+
+       {/* Overlay with cart icon */}
+  <Box
+    className="overlay"
+    sx={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      bgcolor: "rgba(0,0,0,0.4)",
+      opacity: 0,
+      transition: "opacity 0.4s ease",
+    }}
+  >
+    <IconButton
+      onClick={() => console.log("Added to cart")}
+      sx={{
+        bgcolor: "white",
+        "&:hover": { bgcolor: "#B87333", color: "white" },
+        p: 2,
+      }}
+    >
+      <ShoppingCartOutlinedIcon />
+    </IconButton>
+  </Box>
       <Typography
         variant="subtitle1"
         sx={{
@@ -580,18 +612,48 @@ export default function HomePage() {
           textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
         }}
       >
-        Silver Hoops
+        Long Earrings
       </Typography>
     </Box>
 
     {/* Item 2 */}
-    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden" }}>
+    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden", cursor: "pointer",
+    "&:hover .overlay": { opacity: 1 },
+    "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" }, }}>
       <Box
         component="img"
         src={silver1}
         alt="Silver Hoops"
-        sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+        sx={{ width: "100%", height: "100%", objectFit: "cover", transition: "all 0.4s ease",  }}
       />
+       {/* Overlay with cart icon */}
+  <Box
+    className="overlay"
+    sx={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      bgcolor: "rgba(0,0,0,0.4)",
+      opacity: 0,
+      transition: "opacity 0.4s ease",
+    }}
+  >
+    <IconButton
+      onClick={() => console.log("Added to cart")}
+      sx={{
+        bgcolor: "white",
+        "&:hover": { bgcolor: "#B87333", color: "white" },
+        p: 2,
+      }}
+    >
+      <ShoppingCartOutlinedIcon />
+    </IconButton>
+  </Box>
       <Typography
         variant="subtitle1"
         sx={{
@@ -603,18 +665,49 @@ export default function HomePage() {
           textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
         }}
       >
-        Silver Hoops
+        Twin Necklace and Earring
       </Typography>
     </Box>
 
     {/* Item 3 */}
-    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden" }}>
+    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden" , cursor: "pointer",
+    "&:hover .overlay": { opacity: 1 },
+    "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" },}}>
       <Box
         component="img"
         src={silver2}
         alt="Silver Hoops"
-        sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+        sx={{ width: "100%", height: "100%", objectFit: "cover", transition: "all 0.4s ease",  }}
       />
+
+            {/* Overlay with cart icon */}
+  <Box
+    className="overlay"
+    sx={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      bgcolor: "rgba(0,0,0,0.4)",
+      opacity: 0,
+      transition: "opacity 0.4s ease",
+    }}
+  >
+    <IconButton
+      onClick={() => console.log("Added to cart")}
+      sx={{
+        bgcolor: "white",
+        "&:hover": { bgcolor: "#B87333", color: "white" },
+        p: 2,
+      }}
+    >
+      <ShoppingCartOutlinedIcon />
+    </IconButton>
+  </Box>
       <Typography
         variant="subtitle1"
         sx={{
@@ -626,18 +719,49 @@ export default function HomePage() {
           textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
         }}
       >
-        Silver Hoops
+        African Bangle
       </Typography>
     </Box>
 
     {/* Item 4 */}
-    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden" }}>
+    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden", cursor: "pointer",
+    "&:hover .overlay": { opacity: 1 },
+    "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" }, }}>
       <Box
         component="img"
         src={silver3}
         alt="Silver Hoops"
-        sx={{ width: "100%", height: "100%", objectFit: "cover" }}
+        sx={{ width: "100%", height: "100%", objectFit: "cover", transition: "all 0.4s ease",  }}
       />
+
+            {/* Overlay with cart icon */}
+  <Box
+    className="overlay"
+    sx={{
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      bgcolor: "rgba(0,0,0,0.4)",
+      opacity: 0,
+      transition: "opacity 0.4s ease",
+    }}
+  >
+    <IconButton
+      onClick={() => console.log("Added to cart")}
+      sx={{
+        bgcolor: "white",
+        "&:hover": { bgcolor: "#B87333", color: "white" },
+        p: 2,
+      }}
+    >
+      <ShoppingCartOutlinedIcon />
+    </IconButton>
+  </Box>
       <Typography
         variant="subtitle1"
         sx={{
@@ -649,7 +773,7 @@ export default function HomePage() {
           textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
         }}
       >
-        Silver Hoops
+        Ring Set
       </Typography>
     </Box>
   </Box>
@@ -737,7 +861,7 @@ export default function HomePage() {
 </Box>
 
 
-<Box sx={{ bgcolor: "#B87333", color: "white", pt: 6, pb: 2 }}>
+<Box sx={{ bgcolor: "#B87333",  pt: 6, pb: 2 }}>
       {/* Top Section */}
       <Box
         sx={{
@@ -811,7 +935,7 @@ export default function HomePage() {
       {/* Divider Line */}
       <Box sx={{ borderTop: "1px solid black", mx: { xs: 3, md: 10 }, pt: 2 }}>
         <Typography variant="body2" align="center" sx={{ color: "black", mt: 2 }}>
-          ©2025 Manhattan. All rights reserved
+          ©2026 Manhattan. All rights reserved
         </Typography>
       </Box>
     </Box>
