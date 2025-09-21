@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   AppBar,
   Toolbar,
@@ -41,6 +42,7 @@ import dp from "../assets/dp2.png";
 
 
 export default function HomePage() {
+  const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -377,6 +379,7 @@ export default function HomePage() {
                   py: 1.2,
                   "&:hover": { bgcolor: "#B87333", color: "white" },
                 }}
+                onClick={() => navigate("/earrings")}
               >
                 Shop Now
               </Button>
