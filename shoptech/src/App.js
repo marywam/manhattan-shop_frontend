@@ -6,6 +6,9 @@ import SignUpPage from "./Buyer/Register";
 import HomePage from "./Buyer/Home";
 import EarringsPage from "./Buyer/EarringShop";
 import BanglesPage from "./Buyer/BangleShop";
+import NecklacesPage from "./Buyer/NecklaceShop";
+import RingsPage from "./Buyer/RingShop";
+import ContactUsPage from "./Buyer/Contact";
 
 function App() {
   return (
@@ -16,6 +19,9 @@ function App() {
         <Route path="/register" element={<SignUpPage />}/>
         <Route path="/earrings" element={<EarringsPage />}/>
         <Route path="/bangles" element={<BanglesPage />} />
+        <Route path="/necklaces" element={<NecklacesPage/>}/>
+        <Route path="/rings" element={<RingsPage/>}/>
+        <Route path="/contactUs" element={<ContactUsPage/>}/>
       </Routes>
     </BrowserRouter>
   );

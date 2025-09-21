@@ -54,48 +54,6 @@ export default function BanglesPage() {
         }}
       >
         <Toolbar sx={{ justifyContent: "space-between", position: "relative" }}>
-          {isSmallScreen && (
-            <IconButton onClick={() => setOpen(true)} sx={{ color: "white" }}>
-              <MenuIcon />
-            </IconButton>
-          )}
-
-          {/* Drawer for mobile */}
-          <Drawer
-            anchor="left"
-            open={open}
-            onClose={() => setOpen(false)}
-            PaperProps={{
-              sx: { width: 250, bgcolor: "black", color: "white" },
-            }}
-          >
-            <List>
-              {navLinks.map((text) => (
-                <ListItem button key={text} onClick={() => setOpen(false)}>
-                  <ListItemText primary={text} />
-                </ListItem>
-              ))}
-            </List>
-            <Box sx={{ p: 2, mt: "auto" }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                sx={{
-                  color: "white",
-                  borderColor: "white",
-                  fontWeight: "bold",
-                  "&:hover": { bgcolor: "white", color: "black" },
-                }}
-                onClick={() => {
-                  setOpen(false);
-                  console.log("Logged out");
-                }}
-              >
-                Logout
-              </Button>
-            </Box>
-          </Drawer>
-
           {/* Logo */}
           <Typography
             variant="h6"
@@ -103,23 +61,14 @@ export default function BanglesPage() {
               fontWeight: "bold",
               color: "#B87333",
               fontFamily: "serif",
-              flexGrow: isSmallScreen ? 1 : 0,
-              textAlign: "center",
+              flexGrow: 1,
+              textAlign: "left", 
             }}
           >
             Manhattan
           </Typography>
 
-          {!isSmallScreen && (
-            <Box sx={{ display: "flex", gap: 4 }}>
-              {navLinks.map((link) => (
-                <Button key={link} color="inherit">
-                  {link}
-                </Button>
-              ))}
-            </Box>
-          )}
-
+          {/* Right icons */}
           <Box sx={{ display: "flex", gap: 1 }}>
             <IconButton sx={{ color: isSmallScreen ? "white" : "black" }}>
               <ShoppingCartOutlinedIcon />

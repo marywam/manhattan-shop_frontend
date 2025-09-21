@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -20,6 +20,7 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ArrowForwardIcon from "@mui/icons-material/ArrowForward";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import BrownImage from "../assets/Brown.png";
 
 // brand icons
@@ -40,14 +41,16 @@ import silver3 from "../assets/SilverHoops3.png";
 
 import dp from "../assets/dp2.png";
 
-
 export default function HomePage() {
+  const productsRef = useRef(null);
+  const aboutRef = useRef(null);
+  const dealsRef = useRef(null);
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
 
-  const navLinks = ["Category", "About", "Shop", "Contact"];
+  const navLinks = ["Category", "About", "Deals", "Contact"];
 
   return (
     <Box sx={{ bgcolor: "white", minHeight: "100vh" }}>
@@ -58,6 +61,7 @@ export default function HomePage() {
         sx={{
           bgcolor: isSmallScreen ? "black" : "white",
           color: isSmallScreen ? "white" : "black",
+          
         }}
       >
         <Toolbar sx={{ justifyContent: "space-between", position: "relative" }}>
@@ -79,32 +83,53 @@ export default function HomePage() {
           >
             <List>
               {navLinks.map((text) => (
-                <ListItem button key={text} onClick={() => setOpen(false)}>
+                <ListItem
+                  button
+                  key={text}
+                  onClick={() => {
+                    setOpen(false); // ✅ still closes drawer
+
+                    setTimeout(() => {
+                      if (text === "About") {
+                        aboutRef.current?.scrollIntoView({ behavior: "smooth" });
+                      }
+                      if (text === "Category") {
+                        productsRef.current?.scrollIntoView({ behavior: "smooth" });
+                      }
+                      if (text === "Deals") {
+                        dealsRef.current?.scrollIntoView({ behavior: "smooth" });
+                      }
+
+                      if (text === "Contact") {
+                        navigate("/contactUs");
+                      }
+                    }, 300); // small delay (Drawer close animation)
+                  }}
+                >
                   <ListItemText primary={text} />
                 </ListItem>
               ))}
             </List>
 
-             {/* Logout Button fixed at bottom */}
-  <Box sx={{ p: 2, mt: "auto" }}>
-    <Button
-      fullWidth
-      variant="outlined"
-      sx={{
-        color: "white",
-        borderColor: "white",
-        fontWeight: "bold",
-        "&:hover": { bgcolor: "white", color: "black" },
-      }}
-      onClick={() => {
-        setOpen(false);
-        console.log("Logged out"); // Replace with real logout logic
-      }}
-    >
-      Logout
-    </Button>
-  </Box>
-  
+            {/* Logout Button fixed at bottom */}
+            <Box sx={{ p: 2, mt: "auto" }}>
+              <Button
+                fullWidth
+                variant="outlined"
+                sx={{
+                  color: "white",
+                  borderColor: "white",
+                  fontWeight: "bold",
+                  "&:hover": { bgcolor: "white", color: "black" },
+                }}
+                onClick={() => {
+                  setOpen(false);
+                  console.log("Logged out"); // Replace with real logout logic
+                }}
+              >
+                Logout
+              </Button>
+            </Box>
           </Drawer>
 
           {/* Center: Logo */}
@@ -123,14 +148,34 @@ export default function HomePage() {
 
           {/* Nav Links - visible only on large screens */}
           {!isSmallScreen && (
-            <Box sx={{ display: "flex", gap: 4 }}>
-              {navLinks.map((link) => (
-                <Button key={link} color="inherit">
-                  {link}
-                </Button>
-              ))}
-            </Box>
-          )}
+  <Box sx={{ display: "flex", gap: 4 }}>
+    {navLinks.map((link) => (
+      <Button
+        key={link}
+        color="inherit"
+        onClick={() => {
+          if (link === "About") {
+            aboutRef.current?.scrollIntoView({ behavior: "smooth" });
+          }
+          if (link === "Category") {
+            productsRef.current?.scrollIntoView({ behavior: "smooth" });
+          }
+          if (link === "Deals") {
+            dealsRef.current?.scrollIntoView({ behavior: "smooth" });
+          }
+
+          if (link === "Contact") {
+            navigate("/contactUs"); // 👈 Go to contact page
+          }
+          // later handle Shop, Contact, etc.
+        }}
+      >
+        {link}
+      </Button>
+    ))}
+  </Box>
+)}
+
 
           {/* Right: Icons */}
           <Box sx={{ display: "flex", gap: 1, zIndex: 2 }}>
@@ -290,7 +335,10 @@ export default function HomePage() {
                 py: 1.2,
                 "&:hover": { bgcolor: "black", color: "white" },
               }}
-              endIcon={<ArrowForwardIcon />}
+              endIcon={<ArrowDownwardIcon />}
+              onClick={() =>
+                productsRef.current?.scrollIntoView({ behavior: "smooth" })
+              } // 👈 scrolls smoothly
             >
               Shop Now
             </Button>
@@ -326,7 +374,7 @@ export default function HomePage() {
         </Typography>
 
         {/* Products Grid */}
-        <Box
+        <Box  ref={productsRef}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -414,7 +462,7 @@ export default function HomePage() {
                   borderColor: "#B87333",
                   color: "#B87333",
                   fontWeight: "bold",
-                   
+
                   px: 4,
                   py: 1.2,
                   "&:hover": { bgcolor: "#B87333", color: "white" },
@@ -457,7 +505,7 @@ export default function HomePage() {
                 display: "block",
               }}
             />
-            <Box sx={{ flex: 1 , px: { xs: 3, sm: 3, md: 0 }}}>
+            <Box sx={{ flex: 1, px: { xs: 3, sm: 3, md: 0 } }}>
               <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
                 100% Gold Necklace Collection
               </Typography>
@@ -481,6 +529,7 @@ export default function HomePage() {
                   py: 1.2,
                   "&:hover": { bgcolor: "#B87333", color: "white" },
                 }}
+                onClick={() => navigate("/necklaces")}
               >
                 Shop Now
               </Button>
@@ -496,7 +545,7 @@ export default function HomePage() {
               alignItems: "flex-start",
             }}
           >
-            <Box sx={{ flex: 1 , px: { xs: 3, sm: 3, md: 0 }}}>
+            <Box sx={{ flex: 1, px: { xs: 3, sm: 3, md: 0 } }}>
               <Typography variant="h6" sx={{ fontWeight: "bold", mb: 1 }}>
                 Trending Ring Collection
               </Typography>
@@ -520,6 +569,7 @@ export default function HomePage() {
                   py: 1.2,
                   "&:hover": { bgcolor: "#B87333", color: "white" },
                 }}
+                onClick={() => navigate("/rings")}
               >
                 Shop Now
               </Button>
@@ -540,410 +590,487 @@ export default function HomePage() {
       </Box>
 
       {/* Best Collection Section */}
-<Box sx={{ py: 6 }}>
-  {/* Title */}
-  <Typography
-    variant="h5"
-    sx={{
-      fontWeight: "bold",
-      textAlign: "center",
-      mb: 4,
-      fontFamily: "serif",
-    }}
-  >
-    Manhattan Best Collection
-  </Typography>
-
-  {/* Collection Grid */}
-  <Box
-    sx={{
-      display: "grid",
-      gridTemplateColumns: { xs: "1fr", sm: "1fr 1fr", md: "repeat(4, 1fr)" },
-      gap: 3,
-      maxWidth: 1200,
-      mx: "auto",
-      px: { xs: 2, sm: 3, md: 0 }, // side spacing on small screens
-    }}
-  >
-    {/* Item 1 */}
-    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden" ,  cursor: "pointer",
-    "&:hover .overlay": { opacity: 1 },
-    "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" },
-  }}>
-      <Box
-        component="img"
-        src={silver}
-        alt="Silver Hoops"
-        sx={{ width: "100%", height: "100%", objectFit: "cover",  transition: "all 0.4s ease", }}
-      />
-
-       {/* Overlay with cart icon */}
-  <Box
-    className="overlay"
-    sx={{
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      bgcolor: "rgba(0,0,0,0.4)",
-      opacity: 0,
-      transition: "opacity 0.4s ease",
-    }}
-  >
-    <IconButton
-      onClick={() => console.log("Added to cart")}
-      sx={{
-        bgcolor: "white",
-        "&:hover": { bgcolor: "#B87333", color: "white" },
-        p: 2,
-      }}
-    >
-      <ShoppingCartOutlinedIcon />
-    </IconButton>
-  </Box>
-      <Typography
-        variant="subtitle1"
-        sx={{
-          position: "absolute",
-          bottom: 16,
-          left: 16,
-          color: "white",
-          fontWeight: "bold",
-          textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
-        }}
-      >
-        Long Earrings
-      </Typography>
-    </Box>
-
-    {/* Item 2 */}
-    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden", cursor: "pointer",
-    "&:hover .overlay": { opacity: 1 },
-    "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" }, }}>
-      <Box
-        component="img"
-        src={silver1}
-        alt="Silver Hoops"
-        sx={{ width: "100%", height: "100%", objectFit: "cover", transition: "all 0.4s ease",  }}
-      />
-       {/* Overlay with cart icon */}
-  <Box
-    className="overlay"
-    sx={{
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      bgcolor: "rgba(0,0,0,0.4)",
-      opacity: 0,
-      transition: "opacity 0.4s ease",
-    }}
-  >
-    <IconButton
-      onClick={() => console.log("Added to cart")}
-      sx={{
-        bgcolor: "white",
-        "&:hover": { bgcolor: "#B87333", color: "white" },
-        p: 2,
-      }}
-    >
-      <ShoppingCartOutlinedIcon />
-    </IconButton>
-  </Box>
-      <Typography
-        variant="subtitle1"
-        sx={{
-          position: "absolute",
-          bottom: 16,
-          left: 16,
-          color: "white",
-          fontWeight: "bold",
-          textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
-        }}
-      >
-        Twin Necklace and Earring
-      </Typography>
-    </Box>
-
-    {/* Item 3 */}
-    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden" , cursor: "pointer",
-    "&:hover .overlay": { opacity: 1 },
-    "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" },}}>
-      <Box
-        component="img"
-        src={silver2}
-        alt="Silver Hoops"
-        sx={{ width: "100%", height: "100%", objectFit: "cover", transition: "all 0.4s ease",  }}
-      />
-
-            {/* Overlay with cart icon */}
-  <Box
-    className="overlay"
-    sx={{
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      bgcolor: "rgba(0,0,0,0.4)",
-      opacity: 0,
-      transition: "opacity 0.4s ease",
-    }}
-  >
-    <IconButton
-      onClick={() => console.log("Added to cart")}
-      sx={{
-        bgcolor: "white",
-        "&:hover": { bgcolor: "#B87333", color: "white" },
-        p: 2,
-      }}
-    >
-      <ShoppingCartOutlinedIcon />
-    </IconButton>
-  </Box>
-      <Typography
-        variant="subtitle1"
-        sx={{
-          position: "absolute",
-          bottom: 16,
-          left: 16,
-          color: "white",
-          fontWeight: "bold",
-          textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
-        }}
-      >
-        African Bangle
-      </Typography>
-    </Box>
-
-    {/* Item 4 */}
-    <Box sx={{ position: "relative", borderRadius: 2, overflow: "hidden", cursor: "pointer",
-    "&:hover .overlay": { opacity: 1 },
-    "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" }, }}>
-      <Box
-        component="img"
-        src={silver3}
-        alt="Silver Hoops"
-        sx={{ width: "100%", height: "100%", objectFit: "cover", transition: "all 0.4s ease",  }}
-      />
-
-            {/* Overlay with cart icon */}
-  <Box
-    className="overlay"
-    sx={{
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center",
-      bgcolor: "rgba(0,0,0,0.4)",
-      opacity: 0,
-      transition: "opacity 0.4s ease",
-    }}
-  >
-    <IconButton
-      onClick={() => console.log("Added to cart")}
-      sx={{
-        bgcolor: "white",
-        "&:hover": { bgcolor: "#B87333", color: "white" },
-        p: 2,
-      }}
-    >
-      <ShoppingCartOutlinedIcon />
-    </IconButton>
-  </Box>
-      <Typography
-        variant="subtitle1"
-        sx={{
-          position: "absolute",
-          bottom: 16,
-          left: 16,
-          color: "white",
-          fontWeight: "bold",
-          textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
-        }}
-      >
-        Ring Set
-      </Typography>
-    </Box>
-  </Box>
-</Box>
-
-{/* Brown Card Section */}
-<Box
-  sx={{
-    py: 8,
-    display: "flex",
-    justifyContent: "center",
-    px: { xs: 2, md: 0 },
-  }}
->
-  <Card
-    sx={{
-      bgcolor: "#B87333",
-      width: { xs: "100%", md: "80%" },
-      display: "flex",
-      flexDirection: { xs: "column", md: "row" },
-      borderRadius: 3,
-      overflow: "hidden",
-      boxShadow: 6,
-    }}
-  >
-    {/* Left: Image */}
-    <Box
-      component="img"
-      src={dp} // replace with any other image if needed
-      alt="Jewelry"
-      sx={{
-        width: { xs: "100%", md: "50%" },
-        height: { xs: 250, md: "100%" },
-        objectFit: "cover",
-      }}
-    />
-
-    {/* Right: Text */}
-    <Box
-      sx={{
-        flex: 1,
-        color: "white",
-        p: { xs: 3, md: 6 },
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-      }}
-    >
-      <Typography
-        variant="h4"
-        sx={{ fontWeight: "bold", mb: 2, fontFamily: "serif" }}
-      >
-        Our Story
-      </Typography>
-      <Typography variant="body1" sx={{ mb: 3 }}>
-      We love Landingfolio! Our designers were using it for their projects,
-          as clients already knew what Landingfolio was and how to use it. We
-          love Landingfolio! Our designers were using it for their projects, as
-          clients already knew what Landingfolio was and how to use it. We love
-          Landingfolio! Our designers were using it for their projects, as
-          clients already knew what Landingfolio was and how to use it.
-      </Typography>
-      <Button
-        variant="contained"
-        sx={{
-          bgcolor: "white",
-          color: "#B87333",
-          fontWeight: "bold",
-          borderRadius: 2,
-          px: 4,
-          py: 1.2,
-          alignSelf: "flex-start",
-          "&:hover": { bgcolor: "black", color: "white" },
-        }}
-        endIcon={<ArrowForwardIcon />}
-      >
-        Contact Us 
-      </Button>
-    </Box>
-  </Card>
-
-
-
-  
-</Box>
-
-
-<Box sx={{ bgcolor: "#B87333",  pt: 6, pb: 2 }}>
-      {/* Top Section */}
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: { xs: "column", md: "row" },
-          justifyContent: "space-between",
-          px: { xs: 3, md: 10 },
-          pb: 4,
-        }}
-      >
-        {/* Column 1: Brand */}
-        <Box sx={{ mb: { xs: 4, md: 0 }, maxWidth: 300 }}>
-          <Typography variant="h5" sx={{ fontWeight: "bold", mb: 1 }}>
-            Manhattan
-          </Typography>
-          <Typography variant="body2" sx={{ mb: 2 }}>
-            Shop our entire lineup all in one week in store, get styled and join the Fine Crew.
-          </Typography>
-          <Box sx={{ display: "flex", gap: 1 }}>
-            <IconButton sx={{ color: "white" }}>
-              <InstagramIcon />
-            </IconButton>
-            <IconButton sx={{ color: "white" }}>
-              <GoogleIcon />
-            </IconButton>
-            <IconButton sx={{ color: "white" }}>
-              <FacebookIcon />
-            </IconButton>
-          </Box>
-        </Box>
-
-        {/* Column 2: Resources */}
-        <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
-            Resources
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-            <Link href="/" underline="none" color="inherit">Jewelry Care</Link>
-            <Link href="/" underline="none" color="inherit">Ring Sizer</Link>
-            <Link href="/" underline="none" color="inherit">Pricing Aftercare</Link>
-            <Link href="/" underline="none" color="inherit">Style Edit</Link>
-          </Box>
-        </Box>
-
-        {/* Column 3: Stores & Services */}
-        <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
-            Stores & Services
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-            <Link href="/" underline="none" color="inherit">Stores</Link>
-            <Link href="/" underline="none" color="inherit">Pricing Studio</Link>
-            <Link href="/" underline="none" color="inherit">Styling Appointments</Link>
-          </Box>
-        </Box>
-
-        {/* Column 4: Help */}
-        <Box>
-          <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
-            Help
-          </Typography>
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-            <Link href="/" underline="none" color="inherit">Shipping</Link>
-            <Link href="/" underline="none" color="inherit">Returns + Exchange</Link>
-            <Link href="/" underline="none" color="inherit">Warranty</Link>
-            <Link href="/" underline="none" color="inherit">All FAQ</Link>
-          </Box>
-        </Box>
-      </Box>
-
-      {/* Divider Line */}
-      <Box sx={{ borderTop: "1px solid black", mx: { xs: 3, md: 10 }, pt: 2 }}>
-        <Typography variant="body2" align="center" sx={{ color: "black", mt: 2 }}>
-          ©2026 Manhattan. All rights reserved
+      <Box ref={dealsRef}sx={{ py: 6 }}>
+        {/* Title */}
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: "bold",
+            textAlign: "center",
+            mb: 4,
+            fontFamily: "serif",
+          }}
+        >
+          Manhattan Best Collection
         </Typography>
-      </Box>
-    </Box>
 
+        {/* Collection Grid */}
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: {
+              xs: "1fr",
+              sm: "1fr 1fr",
+              md: "repeat(4, 1fr)",
+            },
+            gap: 3,
+            maxWidth: 1200,
+            mx: "auto",
+            px: { xs: 2, sm: 3, md: 0 }, // side spacing on small screens
+          }}
+        >
+          {/* Item 1 */}
+          <Box
+            sx={{
+              position: "relative",
+              borderRadius: 2,
+              overflow: "hidden",
+              cursor: "pointer",
+              "&:hover .overlay": { opacity: 1 },
+              "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" },
+            }}
+          >
+            <Box
+              component="img"
+              src={silver}
+              alt="Silver Hoops"
+              sx={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transition: "all 0.4s ease",
+              }}
+            />
+
+            {/* Overlay with cart icon */}
+            <Box
+              className="overlay"
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                bgcolor: "rgba(0,0,0,0.4)",
+                opacity: 0,
+                transition: "opacity 0.4s ease",
+              }}
+            >
+              <IconButton
+                onClick={() => console.log("Added to cart")}
+                sx={{
+                  bgcolor: "white",
+                  "&:hover": { bgcolor: "#B87333", color: "white" },
+                  p: 2,
+                }}
+              >
+                <ShoppingCartOutlinedIcon />
+              </IconButton>
+            </Box>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                position: "absolute",
+                bottom: 16,
+                left: 16,
+                color: "white",
+                fontWeight: "bold",
+                textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
+              }}
+            >
+              Long Earrings
+            </Typography>
+          </Box>
+
+          {/* Item 2 */}
+          <Box
+            sx={{
+              position: "relative",
+              borderRadius: 2,
+              overflow: "hidden",
+              cursor: "pointer",
+              "&:hover .overlay": { opacity: 1 },
+              "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" },
+            }}
+          >
+            <Box
+              component="img"
+              src={silver1}
+              alt="Silver Hoops"
+              sx={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transition: "all 0.4s ease",
+              }}
+            />
+            {/* Overlay with cart icon */}
+            <Box
+              className="overlay"
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                bgcolor: "rgba(0,0,0,0.4)",
+                opacity: 0,
+                transition: "opacity 0.4s ease",
+              }}
+            >
+              <IconButton
+                onClick={() => console.log("Added to cart")}
+                sx={{
+                  bgcolor: "white",
+                  "&:hover": { bgcolor: "#B87333", color: "white" },
+                  p: 2,
+                }}
+              >
+                <ShoppingCartOutlinedIcon />
+              </IconButton>
+            </Box>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                position: "absolute",
+                bottom: 16,
+                left: 16,
+                color: "white",
+                fontWeight: "bold",
+                textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
+              }}
+            >
+              Twin Necklace and Earring
+            </Typography>
+          </Box>
+
+          {/* Item 3 */}
+          <Box
+            sx={{
+              position: "relative",
+              borderRadius: 2,
+              overflow: "hidden",
+              cursor: "pointer",
+              "&:hover .overlay": { opacity: 1 },
+              "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" },
+            }}
+          >
+            <Box
+              component="img"
+              src={silver2}
+              alt="Silver Hoops"
+              sx={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transition: "all 0.4s ease",
+              }}
+            />
+
+            {/* Overlay with cart icon */}
+            <Box
+              className="overlay"
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                bgcolor: "rgba(0,0,0,0.4)",
+                opacity: 0,
+                transition: "opacity 0.4s ease",
+              }}
+            >
+              <IconButton
+                onClick={() => console.log("Added to cart")}
+                sx={{
+                  bgcolor: "white",
+                  "&:hover": { bgcolor: "#B87333", color: "white" },
+                  p: 2,
+                }}
+              >
+                <ShoppingCartOutlinedIcon />
+              </IconButton>
+            </Box>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                position: "absolute",
+                bottom: 16,
+                left: 16,
+                color: "white",
+                fontWeight: "bold",
+                textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
+              }}
+            >
+              African Bangle
+            </Typography>
+          </Box>
+
+          {/* Item 4 */}
+          <Box
+            sx={{
+              position: "relative",
+              borderRadius: 2,
+              overflow: "hidden",
+              cursor: "pointer",
+              "&:hover .overlay": { opacity: 1 },
+              "&:hover img": { filter: "blur(4px)", transform: "scale(1.05)" },
+            }}
+          >
+            <Box
+              component="img"
+              src={silver3}
+              alt="Silver Hoops"
+              sx={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                transition: "all 0.4s ease",
+              }}
+            />
+
+            {/* Overlay with cart icon */}
+            <Box
+              className="overlay"
+              sx={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                bgcolor: "rgba(0,0,0,0.4)",
+                opacity: 0,
+                transition: "opacity 0.4s ease",
+              }}
+            >
+              <IconButton
+                onClick={() => console.log("Added to cart")}
+                sx={{
+                  bgcolor: "white",
+                  "&:hover": { bgcolor: "#B87333", color: "white" },
+                  p: 2,
+                }}
+              >
+                <ShoppingCartOutlinedIcon />
+              </IconButton>
+            </Box>
+            <Typography
+              variant="subtitle1"
+              sx={{
+                position: "absolute",
+                bottom: 16,
+                left: 16,
+                color: "white",
+                fontWeight: "bold",
+                textShadow: "1px 1px 4px rgba(0,0,0,0.7)",
+              }}
+            >
+              Ring Set
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+
+      {/* Brown Card Section */}
+      <Box
+        ref={aboutRef}
+        sx={{
+          py: 8,
+          display: "flex",
+          justifyContent: "center",
+          px: { xs: 2, md: 0 },
+        }}
+      >
+        <Card
+          sx={{
+            bgcolor: "#B87333",
+            width: { xs: "100%", md: "80%" },
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            borderRadius: 3,
+            overflow: "hidden",
+            boxShadow: 6,
+          }}
+        >
+          {/* Left: Image */}
+          <Box
+            component="img"
+            src={dp} // replace with any other image if needed
+            alt="Jewelry"
+            sx={{
+              width: { xs: "100%", md: "50%" },
+              height: { xs: 250, md: "100%" },
+              objectFit: "cover",
+            }}
+          />
+
+          {/* Right: Text */}
+          <Box
+            sx={{
+              flex: 1,
+              color: "white",
+              p: { xs: 3, md: 6 },
+              display: "flex",
+              flexDirection: "column",
+              justifyContent: "center",
+            }}
+          >
+            <Typography
+              variant="h4"
+              sx={{ fontWeight: "bold", mb: 2, fontFamily: "serif" }}
+            >
+              Our Story
+            </Typography>
+            <Typography variant="body1" sx={{ mb: 3 }}>
+              We love Landingfolio! Our designers were using it for their
+              projects, as clients already knew what Landingfolio was and how to
+              use it. We love Landingfolio! Our designers were using it for
+              their projects, as clients already knew what Landingfolio was and
+              how to use it. We love Landingfolio! Our designers were using it
+              for their projects, as clients already knew what Landingfolio was
+              and how to use it.
+            </Typography>
+            <Button
+              variant="contained"
+              sx={{
+                bgcolor: "white",
+                color: "#B87333",
+                fontWeight: "bold",
+                borderRadius: 2,
+                px: 4,
+                py: 1.2,
+                alignSelf: "flex-start",
+                "&:hover": { bgcolor: "black", color: "white" },
+              }}
+              endIcon={<ArrowForwardIcon />}
+              onClick={() => navigate("/contactUs")}
+            >
+              Contact Us
+            </Button>
+          </Box>
+        </Card>
+      </Box>
+
+      <Box sx={{ bgcolor: "#B87333", pt: 6, pb: 2 }}>
+        {/* Top Section */}
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            justifyContent: "space-between",
+            px: { xs: 3, md: 10 },
+            pb: 4,
+          }}
+        >
+          {/* Column 1: Brand */}
+          <Box sx={{ mb: { xs: 4, md: 0 }, maxWidth: 300 }}>
+            <Typography variant="h5" sx={{ fontWeight: "bold", mb: 1 }}>
+              Manhattan
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              Shop our entire lineup all in one week in store, get styled and
+              join the Fine Crew.
+            </Typography>
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <IconButton sx={{ color: "white" }}>
+                <InstagramIcon />
+              </IconButton>
+              <IconButton sx={{ color: "white" }}>
+                <GoogleIcon />
+              </IconButton>
+              <IconButton sx={{ color: "white" }}>
+                <FacebookIcon />
+              </IconButton>
+            </Box>
+          </Box>
+
+          {/* Column 2: Resources */}
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
+              Resources
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+              <Link href="/" underline="none" color="inherit">
+                Jewelry Care
+              </Link>
+              <Link href="/" underline="none" color="inherit">
+                Ring Sizer
+              </Link>
+              <Link href="/" underline="none" color="inherit">
+                Pricing Aftercare
+              </Link>
+              <Link href="/" underline="none" color="inherit">
+                Style Edit
+              </Link>
+            </Box>
+          </Box>
+
+          {/* Column 3: Stores & Services */}
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
+              Stores & Services
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+              <Link href="/" underline="none" color="inherit">
+                Stores
+              </Link>
+              <Link href="/" underline="none" color="inherit">
+                Pricing Studio
+              </Link>
+              <Link href="/" underline="none" color="inherit">
+                Styling Appointments
+              </Link>
+            </Box>
+          </Box>
+
+          {/* Column 4: Help */}
+          <Box>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold", mb: 1 }}>
+              Help
+            </Typography>
+            <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
+              <Link href="/" underline="none" color="inherit">
+                Shipping
+              </Link>
+              <Link href="/" underline="none" color="inherit">
+                Returns + Exchange
+              </Link>
+              <Link href="/" underline="none" color="inherit">
+                Warranty
+              </Link>
+              <Link href="/" underline="none" color="inherit">
+                All FAQ
+              </Link>
+            </Box>
+          </Box>
+        </Box>
+
+        {/* Divider Line */}
+        <Box
+          sx={{ borderTop: "1px solid black", mx: { xs: 3, md: 10 }, pt: 2 }}
+        >
+          <Typography
+            variant="body2"
+            align="center"
+            sx={{ color: "black", mt: 2 }}
+          >
+            ©2026 Manhattan. All rights reserved
+          </Typography>
+        </Box>
+      </Box>
     </Box>
   );
 }

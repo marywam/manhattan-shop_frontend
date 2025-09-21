@@ -23,9 +23,9 @@ import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";   
 
-import Earring from "../assets/earring.png";
+import Necklace from "../assets/necklace.png";
 
-export default function EarringsPage() {
+export default function NecklacesPage() {
   const [open, setOpen] = useState(false);
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("md"));
@@ -38,7 +38,7 @@ export default function EarringsPage() {
     id: i + 1,
     name: "The Perfect Hoop",
     price: "Ksh 2000",
-    image: Earring,
+    image: Necklace,
     badge: i % 2 === 0 ? "Best Seller" : null,
   }));
 
@@ -53,7 +53,7 @@ export default function EarringsPage() {
           color: isSmallScreen ? "white" : "black",
         }}
       >
-        <Toolbar sx={{ justifyContent: "space-between", position: "relative" }}>
+       <Toolbar sx={{ justifyContent: "space-between", position: "relative" }}>
           {/* Logo */}
           <Typography
             variant="h6"
@@ -101,11 +101,11 @@ export default function EarringsPage() {
           variant="h4"
           sx={{ fontWeight: "bold", mb: 2, letterSpacing: 1 }}
         >
-          MANHATTAN EARRINGS
+          MANHATTAN NECKLACES
         </Typography>
         <Typography variant="body1" sx={{ color: "text.secondary" }}>
           Add a touch of elegance and personality with the perfect pair of
-          earrings—small details that make a big impact, transforming any look
+          necklaces—small details that make a big impact, transforming any look
           from simple to stunning with a subtle sparkle.
         </Typography>
       </Box>
