@@ -414,11 +414,12 @@ export default function HomePage() {
                   borderColor: "#B87333",
                   color: "#B87333",
                   fontWeight: "bold",
-
+                   
                   px: 4,
                   py: 1.2,
                   "&:hover": { bgcolor: "#B87333", color: "white" },
                 }}
+                onClick={() => navigate("/bangles")}
               >
                 Shop Now
               </Button>
