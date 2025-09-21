@@ -222,9 +222,7 @@ export default function RingsPage() {
                   }}
                 >
                   <IconButton
-                    onClick={() =>
-                      console.log(`${product.name} added to cart`)
-                    }
+                    onClick={() => navigate("/productDetail")}
                     sx={{
                       bgcolor: "white",
                       "&:hover": { bgcolor: "#B87333", color: "white" },

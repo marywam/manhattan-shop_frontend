@@ -9,6 +9,7 @@ import BanglesPage from "./Buyer/BangleShop";
 import NecklacesPage from "./Buyer/NecklaceShop";
 import RingsPage from "./Buyer/RingShop";
 import ContactUsPage from "./Buyer/Contact";
+import ProductDetailPage from "./Buyer/ProductDetail";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
         <Route path="/necklaces" element={<NecklacesPage/>}/>
         <Route path="/rings" element={<RingsPage/>}/>
         <Route path="/contactUs" element={<ContactUsPage/>}/>
+        <Route path="/productDetail" element={<ProductDetailPage/>}/>
       </Routes>
     </BrowserRouter>
   );
