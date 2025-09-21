@@ -10,6 +10,8 @@ import NecklacesPage from "./Buyer/NecklaceShop";
 import RingsPage from "./Buyer/RingShop";
 import ContactUsPage from "./Buyer/Contact";
 import ProductDetailPage from "./Buyer/ProductDetail";
+import ShoppingCartPage from "./Buyer/Shopping Cart";
+import Checkout from "./Buyer/Checkout";
 
 function App() {
   return (
@@ -24,6 +26,8 @@ function App() {
         <Route path="/rings" element={<RingsPage/>}/>
         <Route path="/contactUs" element={<ContactUsPage/>}/>
         <Route path="/productDetail" element={<ProductDetailPage/>}/>
+        <Route path="/cart" element={<ShoppingCartPage/>}/>
+        <Route path="/checkout" element={<Checkout/>}/>
       </Routes>
     </BrowserRouter>
   );
