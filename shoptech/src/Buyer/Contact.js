@@ -1,16 +1,76 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Box,
   Typography,
   TextField,
   Button,
   IconButton,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 export default function ContactUsPage() {
   const navigate = useNavigate();
+
+  // Form state
+  const [fullName, setFullName] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [message, setMessage] = useState("");
+
+  // Snackbar state
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success", // success | error
+  });
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Validation
+    if (!fullName || !phoneNumber || !message) {
+      setSnackbar({
+        open: true,
+        message: "Please fill in all fields!",
+        severity: "error",
+      });
+      return;
+    }
+
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/contact/`, {
+        full_name: fullName,
+        phone_number: phoneNumber,
+        message: message,
+      });
+
+      // Success snackbar
+      setSnackbar({
+        open: true,
+        message: "Message sent successfully!",
+        severity: "success",
+      });
+
+      // Clear form
+      setFullName("");
+      setPhoneNumber("");
+      setMessage("");
+    } catch (error) {
+      console.error(error);
+      setSnackbar({
+        open: true,
+        message: "Failed to send message. Try again.",
+        severity: "error",
+      });
+    }
+  };
 
   return (
     <Box sx={{ bgcolor: "white", minHeight: "100vh", p: 3 }}>
@@ -44,6 +104,7 @@ export default function ContactUsPage() {
       {/* Contact Form */}
       <Box
         component="form"
+        onSubmit={handleSubmit}
         sx={{
           maxWidth: 500,
           mx: "auto",
@@ -60,14 +121,16 @@ export default function ContactUsPage() {
           label="Full Name"
           variant="outlined"
           fullWidth
-          required
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
         />
         <TextField
           label="Phone Number"
           type="tel"
           variant="outlined"
           fullWidth
-          required
+          value={phoneNumber}
+          onChange={(e) => setPhoneNumber(e.target.value)}
         />
         <TextField
           label="Message"
@@ -75,7 +138,8 @@ export default function ContactUsPage() {
           rows={4}
           variant="outlined"
           fullWidth
-          required
+          value={message}
+          onChange={(e) => setMessage(e.target.value)}
         />
         <Button
           type="submit"
@@ -91,7 +155,7 @@ export default function ContactUsPage() {
           Send Message
         </Button>
 
-        {/* Company Phone Number (read-only text) */}
+        {/* Company Phone Number */}
         <Typography
           variant="body1"
           sx={{
@@ -104,6 +168,23 @@ export default function ContactUsPage() {
           📞 Call us: +254 704909172
         </Typography>
       </Box>
+
+      {/* Snackbar Notification at Top Center */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        sx={{ mt: 2 }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%", boxShadow: 3 }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

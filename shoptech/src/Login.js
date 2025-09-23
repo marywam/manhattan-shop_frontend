@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   Container,
   Box,
@@ -8,10 +8,78 @@ import {
   Paper,
   Fade,
   Link,
+  Snackbar,
+  Alert,
 } from "@mui/material";
+import axios from "axios";
 import heroImage from "../src/assets/dp.jpeg"; // 🔹 replace with your jewel image path
 
 export default function LoginPage() {
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "error", // "error", "success", etc.
+  });
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Check for empty fields
+    if (!formData.email || !formData.password) {
+      setSnackbar({
+        open: true,
+        message: "Please fill all fields",
+        severity: "error",
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/login/`,
+        formData
+      );
+
+      // Successful login
+      setSnackbar({
+        open: true,
+        message: "Login successful!",
+        severity: "success",
+      });
+
+      // Save JWT token
+      localStorage.setItem("token", response.data.access); // access token
+
+      // Save username from nested user object
+      localStorage.setItem("username", response.data.user.username);
+      // Redirect to dashboard/home page after short delay
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 1000);
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message:
+          error.response?.data?.detail ||
+          "Login failed. Please check your credentials.",
+        severity: "error",
+      });
+      console.error("Login error:", error.response || error.message);
+    }
+  };
   return (
     <Container
       maxWidth="md"
@@ -106,13 +174,16 @@ export default function LoginPage() {
             </Typography>
           </Box>
 
-          <Box component="form" noValidate>
+          <Box component="form" noValidate onSubmit={handleSubmit}>
             <TextField
               fullWidth
               label="Email"
+              name="email" // 🔹 Add name
               type="email"
               variant="outlined"
               margin="normal"
+              value={formData.email} // 🔹 Bind value
+              onChange={handleChange} // 🔹 Bind change handler
               InputLabelProps={{ style: { color: "black" } }}
               InputProps={{ style: { color: "black" } }}
               sx={{
@@ -127,9 +198,12 @@ export default function LoginPage() {
             <TextField
               fullWidth
               label="Password"
+              name="password" // 🔹 Add name
               type="password"
               variant="outlined"
               margin="normal"
+              value={formData.password} // 🔹 Bind value
+              onChange={handleChange} // 🔹 Bind change handler
               InputLabelProps={{ style: { color: "black" } }}
               InputProps={{ style: { color: "black" } }}
               sx={{
@@ -142,6 +216,7 @@ export default function LoginPage() {
             />
 
             <Button
+              type="submit" // 🔹 Make it submit the form
               fullWidth
               variant="contained"
               sx={{
@@ -156,26 +231,25 @@ export default function LoginPage() {
             >
               Login
             </Button>
-
-            <Box
-              sx={{
-                display: "flex",
-                justifyContent: "space-between",
-                mt: 2,
-                flexWrap: "wrap",
-                gap: 1.5,
-              }}
-            >
-              <Typography variant="body2" sx={{ opacity: 0.90 }}>
-                New here?{" "}
-                <Link href="/register" underline="hover">
-                  Create account
-                </Link>
-              </Typography>
-            </Box>
           </Box>
         </Box>
       </Paper>
+
+      {/* Snackbar */}
+      <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

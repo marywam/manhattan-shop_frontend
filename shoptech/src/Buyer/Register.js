@@ -7,7 +7,11 @@ import {
   Button,
   Paper,
   Link,
+  Snackbar,
+  Alert,
 } from "@mui/material";
+import axios from "axios";
+
 
 export default function SignUpPage() {
   const [formData, setFormData] = useState({
@@ -22,15 +26,74 @@ export default function SignUpPage() {
     password2: "",
   });
 
+   // Snackbar state
+   const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "error", // "error", "success", "info", "warning"
+  });
+
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Signup Data:", formData);
-    // 🔹 Later: integrate axios.post("API_URL/register/", formData)
+  const handleCloseSnackbar = () => {
+    setSnackbar({ ...snackbar, open: false });
   };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Check if all fields are filled
+    const emptyFields = Object.entries(formData).filter(
+      ([key, value]) => value.trim() === ""
+    );
+    if (emptyFields.length > 0) {
+      setSnackbar({
+        open: true,
+        message: "Please fill all the fields",
+        severity: "error",
+      });
+      return;
+    }
+
+    // Check if passwords match
+    if (formData.password !== formData.password2) {
+      setSnackbar({
+        open: true,
+        message: "Passwords do not match",
+        severity: "error",
+      });
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        `${process.env.REACT_APP_API_URL}/register/`,
+        formData
+      );
+      setSnackbar({
+        open: true,
+        message: "Account created successfully!",
+        severity: "success",
+      });
+      console.log("Success:", response.data);
+
+      // Optionally redirect after a short delay
+      setTimeout(() => {
+        window.location.href = "/login";
+      }, 1500);
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message:
+          error.response?.data?.detail ||
+          "Failed to register. Please try again.",
+        severity: "error",
+      });
+      console.error("Error:", error.response?.data || error.message);
+    }
+  };
+
 
   return (
     <Container
@@ -261,6 +324,22 @@ export default function SignUpPage() {
             </Box>
         </Box>
       </Paper>
+
+       {/* Snackbar */}
+       <Snackbar
+        open={snackbar.open}
+        autoHideDuration={4000}
+        onClose={handleCloseSnackbar}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity={snackbar.severity}
+          sx={{ width: "100%" }}
+        >
+          {snackbar.message}
+        </Alert>
+      </Snackbar>
     </Container>
   );
 }

@@ -12,6 +12,7 @@ import ContactUsPage from "./Buyer/Contact";
 import ProductDetailPage from "./Buyer/ProductDetail";
 import ShoppingCartPage from "./Buyer/Shopping Cart";
 import Checkout from "./Buyer/Checkout";
+import ProductsPage from "./Buyer/ProductPage";
 
 function App() {
   return (
@@ -28,6 +29,8 @@ function App() {
         <Route path="/productDetail" element={<ProductDetailPage/>}/>
         <Route path="/cart" element={<ShoppingCartPage/>}/>
         <Route path="/checkout" element={<Checkout/>}/>
+        <Route path="/products/:group" element={<ProductsPage />} />
+
       </Routes>
     </BrowserRouter>
   );

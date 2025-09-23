@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   AppBar,
@@ -15,6 +15,13 @@ import {
   useMediaQuery,
   Card,
   Link,
+  Menu,
+  MenuItem,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
@@ -52,6 +59,72 @@ export default function HomePage() {
 
   const navLinks = ["Category", "About", "Deals", "Contact"];
 
+  const [anchorEl, setAnchorEl] = useState(null);
+  const [logoutDialogOpen, setLogoutDialogOpen] = useState(false); // Dialog state
+  const [username, setUsername] = useState("");
+
+  useEffect(() => {
+    const storedUser = localStorage.getItem("username");
+    if (storedUser) setUsername(storedUser);
+  }, []);
+
+  const handleMenuOpen = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const confirmLogout = () => {
+    // Perform logout
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    setLogoutDialogOpen(false);
+    navigate("/login");
+  };
+
+  const handleLogoutClick = () => {
+    setLogoutDialogOpen(true); // Open the confirmation dialog
+    handleMenuClose();
+  };
+
+  const handleProfile = () => {
+    handleMenuClose();
+    navigate("/profile"); // Adjust to your profile route
+  };
+
+   // ----- AUTO LOGOUT -----
+   useEffect(() => {
+    const logoutAfterInactivity = 10 * 60 * 1000; // 10 minutes in ms
+    let timer;
+
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        // Perform logout
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        navigate("/login");
+      }, logoutAfterInactivity);
+    };
+
+    // Reset timer on user activity
+    const events = ["mousemove", "keydown", "click", "scroll"];
+    events.forEach((event) => window.addEventListener(event, resetTimer));
+
+    // Start initial timer
+    resetTimer();
+
+    // Cleanup
+    return () => {
+      clearTimeout(timer);
+      events.forEach((event) =>
+        window.removeEventListener(event, resetTimer)
+      );
+    };
+  }, [navigate]);
+
   return (
     <Box sx={{ bgcolor: "white", minHeight: "100vh" }}>
       {/* Top Navbar */}
@@ -61,7 +134,6 @@ export default function HomePage() {
         sx={{
           bgcolor: isSmallScreen ? "black" : "white",
           color: isSmallScreen ? "white" : "black",
-          
         }}
       >
         <Toolbar sx={{ justifyContent: "space-between", position: "relative" }}>
@@ -74,63 +146,69 @@ export default function HomePage() {
 
           {/* Drawer for small screens */}
           <Drawer
-            anchor="left"
-            open={open}
-            onClose={() => setOpen(false)}
-            PaperProps={{
-              sx: { width: 250, bgcolor: "black", color: "white" },
+  anchor="left"
+  open={open}
+  onClose={() => setOpen(false)}
+  PaperProps={{
+    sx: { width: 250, bgcolor: "black", color: "white" },
+  }}
+>
+  <List>
+    {navLinks.map((text) => (
+      <ListItem
+        button
+        key={text}
+        onClick={() => {
+          setOpen(false);
+
+          setTimeout(() => {
+            if (text === "About") aboutRef.current?.scrollIntoView({ behavior: "smooth" });
+            if (text === "Category") productsRef.current?.scrollIntoView({ behavior: "smooth" });
+            if (text === "Deals") dealsRef.current?.scrollIntoView({ behavior: "smooth" });
+            if (text === "Contact") navigate("/contactUs");
+          }, 300);
+        }}
+      >
+        <ListItemText primary={text} />
+      </ListItem>
+    ))}
+
+    {/* Auth Section */}
+    {username ? (
+      <>
+        
+      
+
+        {/* Logout Button at bottom */}
+        <Box sx={{ p: 2, mt: "auto" }}>
+          <Button
+            fullWidth
+            variant="outlined"
+            sx={{
+              color: "white",
+              borderColor: "white",
+              fontWeight: "bold",
+              "&:hover": { bgcolor: "white", color: "black" },
             }}
+            onClick={handleLogoutClick}
           >
-            <List>
-              {navLinks.map((text) => (
-                <ListItem
-                  button
-                  key={text}
-                  onClick={() => {
-                    setOpen(false); // ✅ still closes drawer
+            Logout
+          </Button>
+        </Box>
+      </>
+    ) : (
+      <>
+        <ListItem button onClick={() => navigate("/login")}>
+          <ListItemText primary="Login" />
+        </ListItem>
+        <ListItem button onClick={() => navigate("/register")}>
+          <ListItemText primary="Sign Up" />
+        </ListItem>
+      </>
+    )}
+  </List>
+</Drawer>
 
-                    setTimeout(() => {
-                      if (text === "About") {
-                        aboutRef.current?.scrollIntoView({ behavior: "smooth" });
-                      }
-                      if (text === "Category") {
-                        productsRef.current?.scrollIntoView({ behavior: "smooth" });
-                      }
-                      if (text === "Deals") {
-                        dealsRef.current?.scrollIntoView({ behavior: "smooth" });
-                      }
-
-                      if (text === "Contact") {
-                        navigate("/contactUs");
-                      }
-                    }, 300); // small delay (Drawer close animation)
-                  }}
-                >
-                  <ListItemText primary={text} />
-                </ListItem>
-              ))}
-            </List>
-
-            {/* Logout Button fixed at bottom */}
-            <Box sx={{ p: 2, mt: "auto" }}>
-              <Button
-                fullWidth
-                variant="outlined"
-                sx={{
-                  color: "white",
-                  borderColor: "white",
-                  fontWeight: "bold",
-                  "&:hover": { bgcolor: "white", color: "black" },
-                }}
-                onClick={() => {
-                  setOpen(false);
-                  console.log("Logged out"); // Replace with real logout logic
-                }}
-              >
-                Logout
-              </Button>
-            </Box>
-          </Drawer>
 
           {/* Center: Logo */}
           <Typography
@@ -148,44 +226,84 @@ export default function HomePage() {
 
           {/* Nav Links - visible only on large screens */}
           {!isSmallScreen && (
-  <Box sx={{ display: "flex", gap: 4 }}>
-    {navLinks.map((link) => (
-      <Button
-        key={link}
-        color="inherit"
-        onClick={() => {
-          if (link === "About") {
-            aboutRef.current?.scrollIntoView({ behavior: "smooth" });
-          }
-          if (link === "Category") {
-            productsRef.current?.scrollIntoView({ behavior: "smooth" });
-          }
-          if (link === "Deals") {
-            dealsRef.current?.scrollIntoView({ behavior: "smooth" });
-          }
+            <Box sx={{ display: "flex", gap: 4 }}>
+              {navLinks.map((link) => (
+                <Button
+                  key={link}
+                  color="inherit"
+                  onClick={() => {
+                    if (link === "About") {
+                      aboutRef.current?.scrollIntoView({ behavior: "smooth" });
+                    }
+                    if (link === "Category") {
+                      productsRef.current?.scrollIntoView({
+                        behavior: "smooth",
+                      });
+                    }
+                    if (link === "Deals") {
+                      dealsRef.current?.scrollIntoView({ behavior: "smooth" });
+                    }
 
-          if (link === "Contact") {
-            navigate("/contactUs"); // 👈 Go to contact page
-          }
-          // later handle Shop, Contact, etc.
-        }}
-      >
-        {link}
-      </Button>
-    ))}
-  </Box>
-)}
-
+                    if (link === "Contact") {
+                      navigate("/contactUs"); // 👈 Go to contact page
+                    }
+                    // later handle Shop, Contact, etc.
+                  }}
+                >
+                  {link}
+                </Button>
+              ))}
+            </Box>
+          )}
 
           {/* Right: Icons */}
-          <Box sx={{ display: "flex", gap: 1, zIndex: 2 }}>
-            <IconButton sx={{ color: "white" }}>
-              <ShoppingCartOutlinedIcon />
-            </IconButton>
-            <IconButton sx={{ color: "white" }}>
-              <PersonOutlineOutlinedIcon />
-            </IconButton>
-          </Box>
+          {/* Right: Icons / Login & Signup */}
+<Box sx={{ display: "flex", gap: 1, zIndex: 2 }}>
+  {username ? (
+    // User is logged in
+    <>
+      <IconButton sx={{ color: "white" }}>
+        <ShoppingCartOutlinedIcon />
+      </IconButton>
+      <Box>
+        <IconButton sx={{ color: "white" }} onClick={handleMenuOpen}>
+          <PersonOutlineOutlinedIcon />
+        </IconButton>
+
+        <Menu
+          anchorEl={anchorEl}
+          open={Boolean(anchorEl)}
+          onClose={handleMenuClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+          transformOrigin={{ vertical: "top", horizontal: "right" }}
+        >
+          <MenuItem disabled>👋 Hi, {username}</MenuItem>
+          <MenuItem onClick={handleProfile}>Profile</MenuItem>
+          <MenuItem onClick={handleLogoutClick}>Logout</MenuItem>
+        </Menu>
+      </Box>
+    </>
+  ) : (
+    // User not logged in
+    <>
+      <Button
+        variant="outlined"
+        sx={{ color: "white", borderColor: "white", fontWeight: "bold" }}
+        onClick={() => navigate("/login")}
+      >
+        Login
+      </Button>
+      <Button
+        variant="contained"
+        sx={{ bgcolor: "white", color: "black", fontWeight: "bold" }}
+        onClick={() => navigate("/register")}
+      >
+        Signup
+      </Button>
+    </>
+  )}
+</Box>
+
 
           {/* Black block only for large screens */}
           {!isSmallScreen && (
@@ -374,7 +492,8 @@ export default function HomePage() {
         </Typography>
 
         {/* Products Grid */}
-        <Box  ref={productsRef}
+        <Box
+          ref={productsRef}
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -427,7 +546,7 @@ export default function HomePage() {
                   py: 1.2,
                   "&:hover": { bgcolor: "#B87333", color: "white" },
                 }}
-                onClick={() => navigate("/earrings")}
+                onClick={() => navigate("products/earrings")}
               >
                 Shop Now
               </Button>
@@ -467,7 +586,7 @@ export default function HomePage() {
                   py: 1.2,
                   "&:hover": { bgcolor: "#B87333", color: "white" },
                 }}
-                onClick={() => navigate("/bangles")}
+                onClick={() => navigate("/products/bangles")}
               >
                 Shop Now
               </Button>
@@ -529,7 +648,7 @@ export default function HomePage() {
                   py: 1.2,
                   "&:hover": { bgcolor: "#B87333", color: "white" },
                 }}
-                onClick={() => navigate("/necklaces")}
+                onClick={() => navigate("products/necklaces")}
               >
                 Shop Now
               </Button>
@@ -569,7 +688,7 @@ export default function HomePage() {
                   py: 1.2,
                   "&:hover": { bgcolor: "#B87333", color: "white" },
                 }}
-                onClick={() => navigate("/rings")}
+                onClick={() => navigate("/products/rings")}
               >
                 Shop Now
               </Button>
@@ -590,7 +709,7 @@ export default function HomePage() {
       </Box>
 
       {/* Best Collection Section */}
-      <Box ref={dealsRef}sx={{ py: 6 }}>
+      <Box ref={dealsRef} sx={{ py: 6 }}>
         {/* Title */}
         <Typography
           variant="h5"
@@ -1071,6 +1190,25 @@ export default function HomePage() {
           </Typography>
         </Box>
       </Box>
+
+      {/* Logout Confirmation Dialog */}
+      <Dialog
+        open={logoutDialogOpen}
+        onClose={() => setLogoutDialogOpen(false)}
+      >
+        <DialogTitle>Confirm Logout</DialogTitle>
+        <DialogContent>
+          <DialogContentText>
+            Are you sure you want to log out?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button sx={{color:"#B87333"}}onClick={() => setLogoutDialogOpen(false)}>Cancel</Button>
+          <Button onClick={confirmLogout} color="error">
+            Logout
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
