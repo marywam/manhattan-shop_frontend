@@ -73,7 +73,9 @@ export default function ProductsPage() {
 
   // ✅ Derive filters dynamically from products
   const filters = {
-    collections: [...new Set(allProducts.map((p) => p.collection).filter(Boolean))],
+    collections: [
+      ...new Set(allProducts.map((p) => p.collection).filter(Boolean)),
+    ],
     colors: [...new Set(allProducts.map((p) => p.color).filter(Boolean))],
     sizes: [...new Set(allProducts.map((p) => p.size).filter(Boolean))],
     prices: [...new Set(allProducts.map((p) => p.price).filter(Boolean))],
@@ -298,7 +300,6 @@ export default function ProductsPage() {
         </Select>
       </Box>
 
-
       {/* Products Grid */}
       <Box
         sx={{
@@ -409,47 +410,46 @@ export default function ProductsPage() {
               <Typography variant="subtitle1" sx={{ fontWeight: "500", mt: 1 }}>
                 {product.name}
               </Typography>
-             {/* ✅ If product has a discount */}
-{product.discount_price ? (
-  <Box sx={{ mt: 1 }}>
-    {/* Discount Price */}
-    <Typography
-      variant="body1"
-      sx={{ fontWeight: "bold", color: "green" }}
-    >
-      Ksh {product.discount_price}
-    </Typography>
+              {/* ✅ If product has a discount */}
+              {product.discount_price ? (
+                <Box sx={{ mt: 1 }}>
+                  {/* Discount Price */}
+                  <Typography
+                    variant="body1"
+                    sx={{ fontWeight: "bold", color: "green" }}
+                  >
+                    Ksh {product.discount_price}
+                  </Typography>
 
-    {/* Original Price (crossed out) */}
-    <Typography
-      variant="body2"
-      sx={{
-        textDecoration: "line-through",
-        color: "gray",
-        fontWeight: "500",
-      }}
-    >
-      Ksh {product.price}
-    </Typography>
+                  {/* Original Price (crossed out) */}
+                  <Typography
+                    variant="body2"
+                    sx={{
+                      textDecoration: "line-through",
+                      color: "gray",
+                      fontWeight: "500",
+                    }}
+                  >
+                    Ksh {product.price}
+                  </Typography>
 
-    {/* Discount Percentage */}
-    <Typography
-      variant="body2"
-      sx={{ color: "red", fontWeight: "bold" }}
-    >
-      {Math.round(product.discount_percentage)}%
-    </Typography>
-  </Box>
-) : (
-  /* ✅ If no discount */
-  <Typography
-    variant="body1"
-    sx={{ fontWeight: "bold", mt: 1, color: "black" }}
-  >
-    Ksh {product.price}
-  </Typography>
-)}
-
+                  {/* Discount Percentage */}
+                  <Typography
+                    variant="body2"
+                    sx={{ color: "red", fontWeight: "bold" }}
+                  >
+                    {Math.round(product.discount_percentage)}%
+                  </Typography>
+                </Box>
+              ) : (
+                /* ✅ If no discount */
+                <Typography
+                  variant="body1"
+                  sx={{ fontWeight: "bold", mt: 1, color: "black" }}
+                >
+                  Ksh {product.price}
+                </Typography>
+              )}
             </Box>
           ))}
       </Box>
