@@ -437,22 +437,7 @@ const handleSaveAddress = async () => {
                 onChange={handleAddressChange}
               />
               
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    size="small"
-                    sx={{ 
-                      color: 'text.secondary',
-                      '&.Mui-checked': { color: 'text.primary' }
-                    }}
-                  />
-                }
-                label={
-                  <Typography variant="body2">
-                    Save This Information For Later
-                  </Typography>
-                }
-              />
+             
             </Box>
             
             {/* Shipping Method */}
