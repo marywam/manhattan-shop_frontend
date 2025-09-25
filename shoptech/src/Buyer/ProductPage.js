@@ -150,6 +150,7 @@ export default function ProductsPage() {
                   sx={{
                     color: { xs: "white", md: "black" },
                   }}
+                  onClick={() => navigate("/cart")}
                 >
                   <ShoppingCartOutlinedIcon />
                 </IconButton>
@@ -385,7 +386,7 @@ export default function ProductsPage() {
                   {/* Cart Icon Overlay */}
                   <Box
                     className="cart-icon"
-                    onClick={() => navigate(`/cart/${product.product_code}`)}
+                    onClick={() => navigate(`/product/${product.product_code}`)}
                     sx={{
                       position: "absolute",
                       top: "50%",
@@ -399,6 +400,7 @@ export default function ProductsPage() {
                       p: 2,
                       zIndex: 2, // ✅ above overlay
                     }}
+                    
                   >
                     <ShoppingCartOutlinedIcon
                       sx={{ color: "white", fontSize: 40 }}

@@ -262,7 +262,7 @@ export default function HomePage() {
   {username ? (
     // User is logged in
     <>
-      <IconButton sx={{ color: "white" }}>
+      <IconButton sx={{ color: "white" }} onClick={() => navigate("/cart")}>
         <ShoppingCartOutlinedIcon />
       </IconButton>
       <Box>
