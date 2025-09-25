@@ -486,6 +486,7 @@ const ShoppingCartPage = () => {
                   py: 1.5,
                   "&:hover": { bgcolor: "#a56a2d" },
                 }}
+                onClick={() => navigate("/checkout", { state: { cartItems } })}
               >
                 CHECK OUT
               </Button>

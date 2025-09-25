@@ -11,6 +11,7 @@ import Checkout from "./Buyer/Checkout";
 import ProductsPage from "./Buyer/ProductPage";
 import BuyerProfilePage from "./Buyer/BuyerProfilePage";
 import BuyerOrdersPage from "./Buyer/OrdersPage";
+import MpesaForm from "./Buyer/Mpesa";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Route path="/checkout" element={<Checkout/>}/>
         <Route path="/products/:group" element={<ProductsPage />} />
         <Route path="/profile" element={<BuyerProfilePage/>}/>
+        <Route path="/payment" element={<MpesaForm/>}/>
         <Route path="/orders" element={<BuyerOrdersPage/>}/>
 
       </Routes>
