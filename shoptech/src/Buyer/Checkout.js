@@ -100,7 +100,7 @@ function Checkout() {
   };
 
   // ✅ Submit address
-  // ✅ Submit address
+// Updated handleSaveAddress function in Checkout.js
 const handleSaveAddress = async () => {
   if (
     !addressForm.first_name ||
@@ -123,7 +123,20 @@ const handleSaveAddress = async () => {
       return;
     }
 
-    // 👉 If this address already exists in `addresses`, just reuse it (no backend call)
+    // 1. First, create order from cart
+    console.log("Creating order from cart...");
+    const orderResponse = await axios.post(
+      `${API_URL}/orders/create_from_cart/`,
+      {},
+      { headers: { Authorization: `Bearer ${token}` } }
+    );
+    
+    console.log("Order created:", orderResponse.data);
+    const createdOrder = orderResponse.data;
+
+    // 2. Save address (if needed)
+    let savedAddress = addressForm;
+    
     const alreadySaved = addresses.some(
       (addr) =>
         addr.first_name === addressForm.first_name &&
@@ -135,30 +148,39 @@ const handleSaveAddress = async () => {
         addr.phone === addressForm.phone
     );
 
-    if (alreadySaved) {
-      console.log("Reusing saved address:", addressForm);
-      navigate("/payment", { state: { subtotal, address: addressForm } });
-      return;
+    if (!alreadySaved) {
+      console.log("Saving new address...");
+      const addressResponse = await axios.post(`${API_URL}/addresses/`, addressForm, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      savedAddress = addressResponse.data;
+      console.log("Address saved:", savedAddress);
     }
 
-    // 👉 Otherwise, save a new address
-    const res = await axios.post(`${API_URL}/addresses/`, addressForm, {
-      headers: { Authorization: `Bearer ${token}` },
+    // 3. Navigate to payment with order data
+    console.log("Navigating to payment with order:", createdOrder);
+    navigate("/payment", { 
+      state: { 
+        subtotal, 
+        address: savedAddress,
+        order: createdOrder  // Pass the created order
+      } 
     });
 
-    console.log("Saved address:", res.data);
-
-    // ✅ Redirect after successful save
-    navigate("/payment", { state: { subtotal, address: res.data } });
   } catch (error) {
-    console.error("Save address error:", error.response?.data || error.message);
-    alert(
-      "Failed to save address: " +
-        (error.response?.data?.detail || error.message)
-    );
+    console.error("Checkout process error:", error.response?.data || error.message);
+    
+    if (error.response?.status === 400 && error.response?.data?.error === "Cart is empty") {
+      alert("Your cart is empty. Please add items to cart before checkout.");
+      navigate("/cart");
+    } else {
+      alert(
+        "Failed to process checkout: " +
+          (error.response?.data?.detail || error.response?.data?.error || error.message)
+      );
+    }
   }
 };
-
   
 
    // ----- AUTO LOGOUT -----

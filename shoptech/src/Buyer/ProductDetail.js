@@ -69,6 +69,37 @@ const ProductDetailPage = () => {
     if (storedUser) setUsername(storedUser);
   }, []);
 
+   // ----- AUTO LOGOUT -----
+       useEffect(() => {
+        const logoutAfterInactivity = 10 * 60 * 1000; // 10 minutes in ms
+        let timer;
+    
+        const resetTimer = () => {
+          clearTimeout(timer);
+          timer = setTimeout(() => {
+            // Perform logout
+            localStorage.removeItem("token");
+            localStorage.removeItem("username");
+            navigate("/login");
+          }, logoutAfterInactivity);
+        };
+    
+        // Reset timer on user activity
+        const events = ["mousemove", "keydown", "click", "scroll"];
+        events.forEach((event) => window.addEventListener(event, resetTimer));
+    
+        // Start initial timer
+        resetTimer();
+    
+        // Cleanup
+        return () => {
+          clearTimeout(timer);
+          events.forEach((event) =>
+            window.removeEventListener(event, resetTimer)
+          );
+        };
+      }, [navigate]);
+
   // ✅ fetch product details from API
   useEffect(() => {
     const fetchProduct = async () => {
@@ -194,6 +225,8 @@ const addToCart = async () => {
   const handleRatingsClose = () => {
     setRatingsAnchorEl(null);
   };
+
+  
 
   return (
     <Box sx={{ bgcolor: "white", minHeight: "100vh" }}>

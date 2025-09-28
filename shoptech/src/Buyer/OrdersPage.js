@@ -32,8 +32,6 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 
-
-
 const API_URL = process.env.REACT_APP_API_URL;
 
 const BuyerOrdersPage = () => {
@@ -47,28 +45,56 @@ const BuyerOrdersPage = () => {
   const [logoutDialogOpen, setLogoutDialogOpen] = useState(false);
   const [username, setUsername] = useState("");
 
+  // Menu & Logout handlers
+  const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
+  const handleMenuClose = () => setAnchorEl(null);
+  const confirmLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("username");
+    setLogoutDialogOpen(false);
+    navigate("/login");
+  };
+  const handleLogoutClick = () => {
+    setLogoutDialogOpen(true);
+    handleMenuClose();
+  };
+  const handleProfile = () => {
+    handleMenuClose();
+    navigate("/profile");
+  };
 
-   // ✅ Menu & Logout
-   const handleMenuOpen = (event) => setAnchorEl(event.currentTarget);
-   const handleMenuClose = () => setAnchorEl(null);
-   const confirmLogout = () => {
-     localStorage.removeItem("token");
-     localStorage.removeItem("username");
-     setLogoutDialogOpen(false);
-     navigate("/login");
-   };
-   const handleLogoutClick = () => {
-     setLogoutDialogOpen(true);
-     handleMenuClose();
-   };
-   const handleProfile = () => {
-     handleMenuClose();
-     navigate("/profile");
-   };
+  // Auto logout logic
+  useEffect(() => {
+    const logoutAfterInactivity = 10 * 60 * 1000; // 10 minutes in ms
+    let timer;
+
+    const resetTimer = () => {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        navigate("/login");
+      }, logoutAfterInactivity);
+    };
+
+    const events = ["mousemove", "keydown", "click", "scroll"];
+    events.forEach((event) => window.addEventListener(event, resetTimer));
+    resetTimer();
+
+    return () => {
+      clearTimeout(timer);
+      events.forEach((event) =>
+        window.removeEventListener(event, resetTimer)
+      );
+    };
+  }, [navigate]);
 
   useEffect(() => {
     const fetchOrders = async () => {
       const token = localStorage.getItem("token");
+      const storedUsername = localStorage.getItem("username");
+      if (storedUsername) setUsername(storedUsername);
+      
       if (!token) return;
 
       try {
@@ -77,6 +103,7 @@ const BuyerOrdersPage = () => {
         });
         if (!res.ok) throw new Error("Failed to fetch orders");
         const data = await res.json();
+        console.log("Orders data:", data); // Debug log
         setOrders(data);
       } catch (err) {
         console.error(err);
@@ -88,6 +115,14 @@ const BuyerOrdersPage = () => {
     fetchOrders();
   }, []);
 
+  // Helper function to get order items for display
+  const getOrderDisplayItems = (order) => {
+    if (!order.items || order.items.length === 0) {
+      return [{ product: { name: "No items" }, quantity: 0, price: 0 }];
+    }
+    return order.items;
+  };
+
   if (loading) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
@@ -98,8 +133,7 @@ const BuyerOrdersPage = () => {
 
   return (
     <Box sx={{ bgcolor: "white", minHeight: "100vh" }}>
-
-         {/* Navbar */}
+      {/* Navbar */}
       <AppBar
         position="relative"
         elevation={0}
@@ -123,9 +157,7 @@ const BuyerOrdersPage = () => {
                   sx={{ color: { xs: "white", md: "black" } }}
                   onClick={() => navigate("/cart")}
                 >
-                 
-                    <ShoppingCartOutlinedIcon />
-                  
+                  <ShoppingCartOutlinedIcon />
                 </IconButton>
                 <Box>
                   <IconButton
@@ -189,6 +221,7 @@ const BuyerOrdersPage = () => {
           <ArrowBackIcon />
         </IconButton>
       </Box>
+      
       <Paper
         elevation={6}
         sx={{
@@ -222,18 +255,18 @@ const BuyerOrdersPage = () => {
           <TableContainer>
             <Table>
               <TableHead>
-                <TableRow sx={{ bgcolor: "#3E2723" }}>
+                <TableRow sx={{ bgcolor: "#B87333" }}>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                     Order ID
                   </TableCell>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                    Product
+                    Products
                   </TableCell>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                    Quantity
+                    Total Items
                   </TableCell>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                    Price
+                    Total Price
                   </TableCell>
                   <TableCell sx={{ color: "white", fontWeight: "bold" }}>
                     Status
@@ -247,50 +280,87 @@ const BuyerOrdersPage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {orders.map((order) => (
-                  <TableRow key={order.id} hover>
-                    <TableCell>{order.id}</TableCell>
-                    <TableCell>{order.product?.name || "N/A"}</TableCell>
-                    <TableCell>{order.quantity}</TableCell>
-                    <TableCell>KES {order.total_price}</TableCell>
-                    <TableCell>
-                      <Chip
-                        label={order.status}
-                        sx={{
-                          bgcolor:
-                            order.status === "Delivered"
-                              ? "#e8f5e9"
-                              : order.status === "Pending"
-                              ? "#fff3e0"
-                              : "#fbe9e7",
-                          color:
-                            order.status === "Delivered"
-                              ? "green"
-                              : order.status === "Pending"
-                              ? "orange"
-                              : "red",
-                          fontWeight: "bold",
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      {new Date(order.created_at).toLocaleDateString()}
-                    </TableCell>
-                    <TableCell>
-                      <Button
-                        variant="contained"
-                        size="small"
-                        sx={{
-                          bgcolor: "#5D4037",
-                          "&:hover": { bgcolor: "black" },
-                          borderRadius: 2,
-                        }}
-                      >
-                        View
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
+                {orders.map((order) => {
+                  const orderItems = getOrderDisplayItems(order);
+                  const totalItems = orderItems.reduce((sum, item) => sum + (item.quantity || 0), 0);
+                  
+                  return (
+                    <TableRow key={order.id} hover>
+                      <TableCell sx={{ textAlign: 'center' }}>{order.id}</TableCell>
+                      <TableCell>
+                        {orderItems.length > 1 ? (
+                          <Box>
+                            <Typography variant="body2" sx={{ fontWeight: 'bold' }}>
+                              {orderItems.length} different products:
+                            </Typography>
+                            {orderItems.slice(0, 2).map((item, index) => (
+                              <Typography key={index} variant="body2" sx={{ fontSize: '0.8rem' }}>
+                                • {item.product?.name || "Unknown"} ({item.quantity})
+                              </Typography>
+                            ))}
+                            {orderItems.length > 2 && (
+                              <Typography variant="body2" sx={{ fontSize: '0.8rem', fontStyle: 'italic' }}>
+                                ...and {orderItems.length - 2} more
+                              </Typography>
+                            )}
+                          </Box>
+                        ) : (
+                          <Typography variant="body2">
+                            {orderItems[0]?.product?.name || "No items"}
+                          </Typography>
+                        )}
+                      </TableCell>
+                      <TableCell sx={{ textAlign: 'center' }}>{totalItems}</TableCell>
+                      <TableCell>KES {order.total_price}</TableCell>
+                      <TableCell>
+                        <Chip
+                          label={order.status}
+                          sx={{
+                            bgcolor:
+                              order.status === "delivered"
+                                ? "#e8f5e9"
+                                : order.status === "pending"
+                                ? "#fff3e0"
+                                : order.status === "paid"
+                                ? "#e3f2fd"
+                                : order.status === "shipped"
+                                ? "#f3e5f5"
+                                : "#fbe9e7",
+                            color:
+                              order.status === "delivered"
+                                ? "green"
+                                : order.status === "pending"
+                                ? "orange"
+                                : order.status === "paid"
+                                ? "blue"
+                                : order.status === "shipped"
+                                ? "purple"
+                                : "red",
+                            fontWeight: "bold",
+                            textTransform: "capitalize",
+                          }}
+                        />
+                      </TableCell>
+                      <TableCell>
+                        {new Date(order.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          variant="contained"
+                          size="small"
+                          sx={{
+                            bgcolor: "#B87333",
+                            "&:hover": { bgcolor: "black" },
+                            borderRadius: 2,
+                          }}
+                          onClick={() => navigate(`/view/${order.id}`)}
+                        >
+                          View Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>
