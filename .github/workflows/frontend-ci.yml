@@ -19,9 +19,11 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ./shoptech
 
       - name: Run tests
         run: npm test -- --watchAll=false
+        working-directory: ./shoptech
 
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
