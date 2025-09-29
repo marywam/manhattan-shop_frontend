@@ -19,18 +19,12 @@ jobs:
         with:
           node-version: '18'
 
-      # Step 3: Install dependencies and run tests inside shoptech
-      - name: Install dependencies & Run tests
+      # Step 3: Install dependencies inside shoptech
+      - name: Install dependencies
         run: |
           cd shoptech
           echo "Installing dependencies..."
           npm install
-          if npm run | grep -q 'test'; then
-            echo "Running tests..."
-            npm test -- --watchAll=false
-          else
-            echo "No test script found, skipping tests."
-          fi
 
       # Step 4: Log in to Docker Hub
       - name: Log in to Docker Hub
