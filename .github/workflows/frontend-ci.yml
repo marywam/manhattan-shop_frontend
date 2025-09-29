@@ -23,7 +23,6 @@ jobs:
       - name: Install dependencies
         run: |
           cd shoptech
-          echo "Installing dependencies..."
           npm install
 
       # Step 4: Log in to Docker Hub
