@@ -19,11 +19,13 @@ jobs:
         with:
           node-version: '18'
 
-      # Step 3: Install dependencies inside shoptech
-      - name: Install dependencies
+      # Step 3: Install dependencies and set API URL
+      - name: Set API URL and install dependencies
         run: |
+          echo "REACT_APP_API_URL=${{ secrets.REACT_APP_API_URL }}" > shoptech/.env
           cd shoptech
           npm install
+
 
       # Step 4: Log in to Docker Hub
       - name: Log in to Docker Hub
