@@ -62,3 +62,7 @@ npm start
 ## ✅ You're Live
 
 Visit < <http://192.168.0.104:3000>> to access the development server.
+
+## Deployed Manhattan Live Website
+
+Visit <http://3.238.121.21/>> to access the deployed website
