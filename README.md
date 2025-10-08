@@ -75,4 +75,5 @@ Visit <http://3.238.121.21/>> to access the deployed website
 <img width="987" height="831" alt="Screenshot From 2025-10-09 00-04-59" src="https://github.com/user-attachments/assets/5e653c57-fc94-448d-96cc-d91a794730f8" />
 
 ###EC2 Running
-<img width="987" height="831" alt="Screenshot From 2025-10-09 00-04-59" src="https://github.com/user-attachments/assets/d42b8709-1ba4-47e8-9d55-9da8bbaecae7" />
+<img width="1688" height="181" alt="Screenshot From 2025-10-09 00-13-39" src="https://github.com/user-attachments/assets/639aefb0-6d31-41a3-97af-56bd67b24c01" />
+
