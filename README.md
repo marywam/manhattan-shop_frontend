@@ -1,4 +1,4 @@
-# Jewelerly Platform Backend
+# Jewelerly Platform Frontend
 
 Its a **Eccomerce application website** built with **React** and **Material UI**that allows an **Buyers** to make their purchase and inlcude a variety of jewelerly they can choose from.
 
