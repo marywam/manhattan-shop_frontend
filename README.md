@@ -68,7 +68,7 @@ Visit < <http://192.168.0.104:3000>> to access the development server.
 Visit <http://3.238.121.21/>> to access the deployed website
 ### Architecture diagram
 
-##Image one 
+## Image one 
 <img width="987" height="831" alt="Screenshot From 2025-10-09 00-04-47" src="https://github.com/user-attachments/assets/7c366544-36d4-4b21-ad3d-392b92f87a91" />
 
 ## Image 2
